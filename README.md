@@ -243,7 +243,7 @@ Conflux Portal 是由 Conflux 提供的浏览器插件，目前提供了 Chrome 
 点击右上角组件中的 *Connect to Conflux Portal* 按钮，Conflux Portal 页面将被打开，输入密码和选择账户后完成连接。连接成功后，将会在按钮下看到当前连接的账户地址以及账户中的余额。
 
 <p align="center">
-  <img src="./screenshots/frontend_portal.png" width="800px">
+  <img src="./screenshots/frontend_portal.png" width="600px">
 </p>
 
 #### 运行 Coin 合约代币增发和代币转账操作
@@ -255,7 +255,7 @@ Conflux Portal 是由 Conflux 提供的浏览器插件，目前提供了 Chrome 
 - 代币转账：选择 *send* 方法并填入收款人地址（*receiver*）和转账的数量（*amount*），点击 *Push Transaction*，在弹出的 *ConfluxPortal Notification* 窗口中点击 *Confirm* 按钮来确认交易。
 
 <p align="center">
-  <img src="./screenshots/frontend_mint.png" width="800px">
+  <img src="./screenshots/frontend_mint.png" width="600px">
 </p>
 
 #### 查看 Coin 合约中的余额
@@ -263,7 +263,7 @@ Conflux Portal 是由 Conflux 提供的浏览器插件，目前提供了 Chrome 
 选择 *balanceOf* 方法并在 *tokenOwner* 输入框中填入查询的地址，点击 *Query Data* 按钮可以查询到账户的余额。 
 
 <p align="center">
-  <img src="./screenshots/frontend_balanceof.png" width="800px">
+  <img src="./screenshots/frontend_balanceof.png" width="600px">
 </p>
 
 #### 查看 Sent 事件
@@ -271,7 +271,7 @@ Conflux Portal 是由 Conflux 提供的浏览器插件，目前提供了 Chrome 
 选择 *Sent* 事件并点击 *Query Data* 可以查询到转账操作所触发的转账事件的记录。
 
 <p align="center">
-  <img src="./screenshots/frontend_sent.png" width="800px">
+  <img src="./screenshots/frontend_sent.png" width="600px">
 </p>
 
 ### 前端项目解析
