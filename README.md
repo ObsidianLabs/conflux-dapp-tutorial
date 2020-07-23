@@ -205,6 +205,10 @@ Conflux 智能合约的每个调用的方法都可以带上 *Value* 参数，这
   <img src="./screenshots/coin_sent.png" width="800px">
 </p>
 
+### 代付功能
+
+敬请期待
+
 ## 前端项目
 
 前端项目源码可以前往 [Conflux 前端](https://github.com/ObsidianLabs/conflux-frontend-react)。
