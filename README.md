@@ -6,6 +6,7 @@
 - [准备工作](#准备工作)
 - [智能合约](#智能合约)
 - [调用合约](#调用合约)
+- [代付功能](#代付功能)
 - [前端项目](#前端项目)
 - [总结](#总结)
 
@@ -14,6 +15,8 @@
 Conflux DApp 开发教程将使用 [Conflux Studio](https://github.com/ObsidianLabs/ConfluxStudio) 在 Oceanus 网络下开发一个简单的代币应用 Coin。
 
 通过这个开发教程，你将会学习到如何进行 Conflux 智能合约的编写、调用，配置智能合约的代付以及如何使用 Web 前端项目与智能合约进行交互，从而实现一个包含前端和智能合约的完整的 DApp。
+
+在阅读教程中遇到任何问题，欢迎在 [Issues](https://github.com/ObsidianLabs/conflux-dapp-tutorial/issues) 中向我们反馈。
 
 ## 准备工作
 
@@ -43,7 +46,7 @@ Conflux DApp 开发教程将使用 [Conflux Studio](https://github.com/ObsidianL
 
 - `minter_key` 用于 Coin 合约部署时的签名，是这个教程中最常使用的钥匙对
 - `receiver_key` 用于 Coin 合约接收转账，将在后文中介绍转账时用到
-- `sponsor_key` 用于 Coin 合约代付功能，将在后文中介绍代付功能时用到
+- `sponsor_key` 用于 Coin 合约代付功能，将在后文中介绍[代付功能](#代付功能)时用到
 
 ### 连接 Conflux 网络
 
@@ -74,6 +77,12 @@ Conflux DApp 开发教程将使用 [Conflux Studio](https://github.com/ObsidianL
 </p>
 
 使用上述方法在 Conflux Studio 中为 `minter_key` 和 `sponsor_key` 申请 CFX Token。完成申请后，这两个账户上的余额将会从 0 CFX 更新为 100 CFX。
+
+目前余额信息为：
+
+- `minter_key` 余额 100 CFX
+- `receiver_key` 余额 0 CFX
+- `sponsor_key` 余额 100 CFX
 
 ## 智能合约
 
@@ -252,7 +261,7 @@ Conflux 智能合约的每个调用的方法都可以带上 *Value* 参数，这
   <img src="./screenshots/coin_sent.png" width="800px">
 </p>
 
-### 代付功能
+## 代付功能
 
 Conflux Studio 支持 Conflux 系统合约提供的[代付功能](https://developer.conflux-chain.org/docs/conflux-rust/internal_contract/internal_contract#sponsorship-for-usage-of-contracts)。
 
@@ -260,36 +269,47 @@ Conflux Studio 支持 Conflux 系统合约提供的[代付功能](https://develo
 
 - `add_privilege` 添加合约代付白名单，在代付白名单中的地址调用该合约的方法时不需要付手续费，费用由代付账户支付。其中添加特殊地址 `0x0000000000000000000000000000000000000000` 代表为所有调用该合约的地址代付费用
 - `remove_privilege` 移除合约代付白名单
-- `set_sponsor_for_collateral` 设置合约储存费 (collateral for storage) 的代付账户及代付金额上限
-- `set_sponsor_for_gas` 设置合约手续费 (gas fee) 的代付账户及代付金额上限
+- `set_sponsor_for_collateral` 设置合约储存费 (collateral for storage) 的代付账户及代付金额
+- `set_sponsor_for_gas` 设置合约手续费 (gas fee) 的代付账户、代付金额及每笔交易代付金额上限
 
-启用一个合约的代付需要设置代付的账户、代付金额的上限及代付白名单。教程将会使用 Conflux Studio 通过系统合约设置代付账户及代付金额上限，通过 Coin 合约添加代付白名单。设置完成后，`minter_key` 账户调用 Coin 合约的方法时将不会被扣除手续费，手续费由 `sponsor_key` 账户代付。
+启用一个合约的代付需要设置代付的账户、代付金额的及代付白名单。教程将会使用 Conflux Studio 通过系统合约设置代付账户及代付金额，通过 Coin 合约添加代付白名单。设置完成后，`minter_key` 账户调用 Coin 合约的方法时将不会被扣除手续费，手续费由 `sponsor_key` 账户代付。
 
-#### 设置代付账户及代付金额上限
+### 设置代付账户及代付金额
 
 在 Conflux Studio 中访问系统合约地址 `0x0888000000000000000000000000000000000001`，在合约调用区域能看到前文中提及的四个设置代付的方法。
 
 <p align="center">
-  <img src="./screenshots/系统代付4个方法.png" width="400px">
+  <img src="./screenshots/sponsor_methods.png" width="800px">
 </p>
 
 选择 `set_sponsor_for_collateral` 方法，该方法有三个参数：
 
 - *contract_addr* 设置代付的合约地址。填入 `contract_addr`
-- *Value* 设置代付金额上限。填入整数 50
+- *Value* 设置代付金额。填入整数 40
 - *Signer* 代付账户地址。填入 `sponsor_key` 地址
 
 <p align="center">
-  <img src="./screenshots/填好的代付.png" width="800px">
+  <img src="./screenshots/sponsor_collateral.png" width="800px">
 </p>
 
-填好以上参数并执行运行，系统合约将为 Coin 合约设置好储存费代付账户。
+填好以上参数并执行运行，系统合约将为 Coin 合约设置好储存费代付账户，此时 `sponsor_key` 账户将会被扣除 40 CFX。
 
-使用相同参数调用 `set_sponsor_for_gas` 为 Coin 合约设置手续费代付账户。
+选择 `set_sponsor_for_gas` 方法，该方法有四个参数：
 
-完成这两个方法的调用后 Coin 合约代付账户便设置好了，`sponsor_key` 账户将为 Coin 合约的手续费和储存费各提供上限为 50 CFX Token 的代付服务。由于目前代付白名单中并没有账户地址，因此还需要添加白名单地址才能完成代付设置。
+- *contract_addr* 设置代付的合约地址。填入 `contract_addr`
+- *upper_bound* 设置每笔交易代付的上限。填入 1000000000000
+- *Value* 设置代付金额。填入整数 40
+- *Signer* 代付账户地址。填入 `sponsor_key` 地址
 
-#### 添加代付白名单
+<p align="center">
+  <img src="./screenshots/sponsor_gas.png" width="800px">
+</p>
+
+填好以上参数并再次执行运行，系统合约将为 Coin 合约设置好手续费代付账户，此时 `sponsor_key` 账户将会再次被扣除 40 CFX。
+
+完成这两个方法的调用后 Coin 合约代付账户便设置好了，`sponsor_key` 账户将为 Coin 合约的手续费和储存费各提供为 40 CFX Token 的代付服务。由于目前代付白名单中并没有账户地址，因此还需要添加白名单地址才能完成代付设置。
+
+### 添加代付白名单
 
 在 Coin 合约中集成了设置代付白名单的方法，通过调用此方法可以添加或删除代付白名单。
 
@@ -301,17 +321,15 @@ Conflux Studio 支持 Conflux 系统合约提供的[代付功能](https://develo
 
 运行后就成功设置了代付白名单了，至此 Coin 合约的代付功能设置好了。
 
-#### 代付测试
+### 代付测试
 
-在进行代付测试前，先[查询](#申请测试-CFX)并记录下 `minter_key` 和 `sponsor_key` 账户的 CFX 余额：
+在进行代付测试前，先[查询](#申请测试-CFX)并记录下 `minter_key` 账户的 CFX 余额。
 
-- `minter_key` 余额为 99 CFX [TODO 更新真实余额]
-- `sponsor_key` 余额为 100 CFX [TODO 更新真实余额]
+`minter_key` 余额为 97.6210937497093952 CFX。
 
-回到 Coin 合约调用页面，再次调用 *mint* 方法并使用 `minter_key` 地址[增发代币](#增发代币) 1000，完成代币增发后再次查询这两个账户的余额：
+回到 Coin 合约调用页面，再次调用 *mint* 方法并使用 `minter_key` 地址[增发代币](#增发代币) 1000，完成代币增发后再次查询这个账户的余额：
 
-- `minter_key` 余额为 99 CFX [TODO 更新真实余额]
-- `sponsor_key` 余额为 99 CFX [TODO 更新真实余额]
+`minter_key` 余额为 97.6210937497093952 CFX。
 
 可以看到增发代币的这笔交易，原本应该由 `minter_key` 账户支付的手续费，变成了由 `sponsor_key` 账户支付。
 
@@ -368,9 +386,9 @@ Conflux Portal 是由 Conflux 提供的浏览器插件，目前提供了 Chrome 
 
 左下角的组件为 Coin 合约组件，可以通过这个组件调用代币增发和代币转账功能。
 
-- 代币增发：选择 *mint* 方法并在 *receiver* 中填入增发地址 `minter_key` 地址和在 *amount* 中填入增发代币的数量 10，点击 *Push Transaction*，在弹出的 *ConfluxPortal Notification* 窗口中点击 *Confirm* 按钮来确认交易。
+- 代币增发：选择 *mint* 方法并在 *receiver* 中填入增发地址 `minter_key` 地址和在 *amount* 中填入增发代币的数量 100，点击 *Push Transaction*，在弹出的 *ConfluxPortal Notification* 窗口中点击 *Confirm* 按钮来确认交易。
 
-- 代币转账：选择 *send* 方法并在 *receiver* 中填入收款人地址 `receiver_key` 地址和在 *amount* 中转账代币的数量 2，点击 *Push Transaction*，在弹出的 *ConfluxPortal Notification* 窗口中点击 *Confirm* 按钮来确认交易。
+- 代币转账：选择 *send* 方法并在 *receiver* 中填入收款人地址 `receiver_key` 地址和在 *amount* 中转账代币的数量 20，点击 *Push Transaction*，在弹出的 *ConfluxPortal Notification* 窗口中点击 *Confirm* 按钮来确认交易。
 
 <p align="center">
   <img src="./screenshots/frontend_mint.png" width="600px">
