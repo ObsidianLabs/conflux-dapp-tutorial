@@ -156,14 +156,14 @@ contract Coin {
       return balances[tokenOwner];
     }
 
-    // 定义了 add 方法，调用系统合约 add_privilege 方法添加合约代付白名单
+    // 定义了 add_privilege 方法，调用系统合约 add_privilege 方法添加地址到代付白名单
     function add_privilege(address account) public payable {
         address[] memory a = new address[](1);
         a[0] = account;
         SPONSOR.add_privilege(a);
     }
 
-    // 定义了 remove 方法，调用系统合约 remove_privilege 方法移除合约代付白名单
+    // 定义了 remove_privilege 方法，调用系统合约 remove_privilege 从合约代付白名单中移除地址
     function remove_privilege(address account) public payable {
         address[] memory a = new address[](1);
         a[0] = account;
