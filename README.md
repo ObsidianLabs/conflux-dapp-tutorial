@@ -1,6 +1,6 @@
 # Tutorial for Conflux Studio DApp Development
 
-## 目录
+## Catelog
 
 - [Introduction](#Introduction)
 - [Preparation](#Preparation)
