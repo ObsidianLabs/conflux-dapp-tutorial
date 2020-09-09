@@ -22,7 +22,7 @@ Conflux DApp 开发教程将使用 [Conflux Studio](https://github.com/ObsidianL
 
 ### 安装 IDE
 
-请在 GitHub [下载页面](https://github.com/ObsidianLabs/ConfluxStudio/releases)下载 Conflux Studio。目前 Conflux Studio 支持 macOS 和 Linux 系统，请根据系统下载对应的版本。
+请在 GitHub [下载页面](https://github.com/ObsidianLabs/ConfluxStudio/releases)下载 Conflux Studio。目前 Conflux Studio 支持 macOS，Windows 和 Linux 系统，请根据系统下载对应的版本。
 
 正确安装 Conflux Studio 并初次启动后，Conflux Studio 将显示欢迎页面，根据提示完成 Docker, Conflux Node 以及 Conflux Truffle 的下载、安装及启动。
 
