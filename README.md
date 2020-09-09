@@ -1,169 +1,170 @@
-# Conflux DApp 开发教程
+# Tutorial for Conflux Studio DApp Development
 
 ## 目录
 
-- [简介](#简介)
-- [准备工作](#准备工作)
-- [智能合约](#智能合约)
-- [调用合约](#调用合约)
-- [代付功能](#代付功能)
-- [前端项目](#前端项目)
-- [总结](#总结)
+- [Introduction](#Introduction)
+- [Preparation](#Preparation)
+- [Smart Contract](#Smart-Contract)
+- [Call Contract](#Call-Contract)
+- [sponsorship function](#sponsorship-function)
+- [Front-end Project](#Front-end-Project)
+- [Summary](#Summary)
 
-## 简介
+## Introduction
 
-Conflux DApp 开发教程将使用 [Conflux Studio](https://github.com/ObsidianLabs/ConfluxStudio) 在 Oceanus 网络下开发一个简单的代币应用 Coin。
+We will use [Conflux Studio](https://github.com/ObsidianLabs/ConfluxStudio) to develop a simple token application - Coin, under the Oceanus network in this tutorial. 
 
-通过这个开发教程，你将会学习到如何进行 Conflux 智能合约的编写、调用，配置智能合约的代付以及如何使用 Web 前端项目与智能合约进行交互，从而实现一个包含前端和智能合约的完整的 DApp。
+With this tutorial, users can learn how to write and call Conflux smart contracts, configure smart contract sponsors, and how to use web front-end projects to interact with smart contracts to develop a complete DApp that includes the front-end and smart contracts.
 
-在阅读教程中遇到任何问题，欢迎在 [Issues](https://github.com/ObsidianLabs/conflux-dapp-tutorial/issues) 中向我们反馈。
+If there are any problems while reading the tutorial, please report it on [Github Issues](https://github.com/ObsidianLabs/conflux-dapp-tutorial/issues).
 
-## 准备工作
+## Preparation
 
-### 安装 IDE
+### Install IDE
 
-请在 GitHub [下载页面](https://github.com/ObsidianLabs/ConfluxStudio/releases)下载 Conflux Studio。目前 Conflux Studio 支持 macOS，Windows 和 Linux 系统，请根据系统下载对应的版本。
+Please download Conflux Studio from the [download page](https://github.com/ObsidianLabs/ConfluxStudio/releases) of GitHub. Currently Conflux Studio supports macOS, Linux and Windows systems, please download the corresponding version according to your computer system.
 
-正确安装 Conflux Studio 并初次启动后，Conflux Studio 将显示欢迎页面，根据提示完成 Docker, Conflux Node 以及 Conflux Truffle 的下载、安装及启动。
+After installing Conflux Studio correctly and starting it for the first time, users will see a welcome page. Please follow the prompts to complete the download, installation and startup of Docker, Conflux Node and Conflux Truffle.
 
 <p align="center">
   <img src="./screenshots/welcome.png" width="800px">
 </p>
 
-### 创建钱包
+### Create Wallet
 
-完成所有的安装步骤后，首先需要创建钥匙对来完成后续的合约部署以及调用。
+After installation, first users need to create a keypair to continue the following contract deployment and calling.
 
-在 Conflux Studio 的任意界面，点击应用左下⻆的钥匙图标，打开密钥管理器。点击 *Create* 按钮打开新钥匙对弹窗，输入钥匙对的名字并点击 *Save* 按钮。完成后将在密钥管理器中看到刚刚生成的钥匙对的地址。钥匙对由私钥和公钥组成，公钥在智能合约中也常被称作地址。
+Users can open the keypair manager by clicking the key icon at the bottom left on any interface of Conflux Studio. Click the *Create* button to open the New Keypair pop-up window, enter the name of the keypair and click the *Save* button. And then users will see the address of the keypair generated in the keypair manager. A keypair consists of a private key and a public key. The public key is also called address in smart contracts.
 
-导出私钥可以通过点击每个地址后面的眼睛按钮打开查看私钥弹窗，弹窗显示地址以及私钥。后续教程中会需要通过管理器导出私钥。
+To export the private key, users can click the eye-shaped button behind each address to open the private key pop-up window, which displays the address and the private key. In following steps, users will need to export private keys through the manager.
 
 <p align="center">
   <img src="./screenshots/keypair_manager.png" width="800px">
 </p>
 
-为了顺利完成教程，首先需要创建三个钥匙对：
+Three keypairs are needed to finish this tutorial:
 
-- `minter_key` 用于 Coin 合约部署时的签名，是这个教程中最常使用的钥匙对
-- `receiver_key` 用于 Coin 合约接收转账，将在后文中介绍转账时用到
-- `sponsor_key` 用于 Coin 合约代付功能，将在后文中介绍[代付功能](#代付功能)时用到
+- `minter_key`: used for the signature of Coin contract deployment and is the most frequently used keypair in this tutorial
+- `receiver_key`: used to receive transfers in the Coin contract, and will be used when transferring
+- `sponsor_key`: used for the Coin contract sponsorship function, which will be used in the sponsorship function sponsorship [sponsorship function](#sponsorship-function)
 
-### 连接 Conflux 网络
+### Connect to Conflux Network
 
-教程将在 Oceanus 网络进行合约的部署以及合约的调用。点击顶部 *Network* 标签的倒三角打开下拉菜单，点击选择 *Oceanus* 网络进行切换。
+Contract deployment and calling in this tutorial will be based on the Oceanus network. Click the inverted triangle of the *Network* label at the top to open the drop-down menu. Select the *Oceanus* network.
 
-切换完成后，可以在主页面中看到当前网络为 *oceanus*。页面左边包括了当前网络的节点 *URL*，*Chain ID*，*TPS* 信息，页面右边包含了当前网络区块的信息。
+And then users will see on the main page that the current network is *oceanus*. The left side of the page displays the node *URL*, *Chain ID*, and *TPS* information of the current network, and the right side shows the block information of the current network.
 
 <p align="center">
   <img src="./screenshots/oceanus.png" width="800px">
 </p>
 
-### 申请测试 CFX
+### Apply for Testnet Tokens - CFX
 
-点击顶部 *Explorer* 标签打开区块浏览器，并在地址栏粘贴钥匙对地址，可以在左边看到当前地址的 CFX 余额信息。
+Click the *Explorer* tab at the top to open the block explorer, and paste the keypair address in the address bar, then users can see the CFX balance of the pasted address on the left.
 
 <p align="center">
   <img src="./screenshots/balance0.png" width="800px">
 </p>
 
-在区块链的世界中，大家通常将申请测试 Token 的方式称为 faucet，目前在 Oceanus 网络下每次 faucet 申请到的 Token 为 100 CFX。
+In the blockchain world, the method of applying for testnet tokens is called faucet. Currently, the total of tokens applied by each faucet under the Oceanus network is 100 CFX.
 
-获取 CFX 的方式有两种方式：
-- 输入地址后点击地址栏右边的水龙头按钮，Conflux Studio 将为地址自动申请 CFX
-- 你也可以直接在浏览器中输入 `https://wallet.confluxscan.io/faucet/dev/ask?address={address}` 来申请 CFX
+There are two ways to get CFX:
+- After entering the address, click the faucet-shaped icon on the right side of the address bar, and then Conflux Studio will automatically apply for CFX for the address.
+- Users can also directly enter  `https://wallet.confluxscan.io/faucet/dev/ask?address={address}` in a browser to apply for CFX.
 
 <p align="center">
   <img src="./screenshots/faucet.png" width="800px">
 </p>
 
-使用上述方法在 Conflux Studio 中为 `minter_key` 和 `sponsor_key` 申请 CFX Token。完成申请后，这两个账户上的余额将会从 0 CFX 更新为 100 CFX。
 
-目前余额信息为：
+Please use the above mentioned methods to apply for CFX Tokens for `minter_key` and `sponsor_key` in Conflux Studio. After application, the balances on the two accounts will be updated from 0 CFX to 100 CFX.
 
-- `minter_key` 余额 100 CFX
-- `receiver_key` 余额 0 CFX
-- `sponsor_key` 余额 100 CFX
+The current balance is:
 
-## 智能合约
+- `minter_key`: 100 CFX
+- `receiver_key`: 0 CFX
+- `sponsor_key`: 100 CFX
 
-### 创建项目
+## Smart Contract
 
-点击顶部左边的 *Project* 标签切换至项目列表页面，点击页面中的 *New* 按钮打开项目创建窗口，输入项目的名称并选择 *coin* 模版，点击 *Create Project* 完成项目的创建。
+### Create Project
+
+Click the *Project* tab on the top left, switch to the project list page, click the *New* button on the right,the Create a New Project pop-up window will jump out. Enter Project Name and choose *coin* Template, and then click *Create Project*.
 
 <p align="center">
   <img src="./screenshots/create_project.png" width="800px">
 </p>
 
-### 合约代码
+### Contract Code
 
-Coin 合约是一个简单的代币合约，其中：
+The Coin contract is a simple token contract in which:
 
-- 通过 *mint* 方法可以增发代币数量
-- 通过 *send* 方法可以将一定数量的代币转账给别的用户，同时会在事件中记录下这笔转账的信息
-- 通过 *balanceOf* 方法可以查询到指定账户地址的代币余额
-- 通过 *add_privilege* 方法可以为合约添加代付白名单
-- 通过 *remove_privilege* 方法可以为合约移除代付白名单
+- The *mint* method can be used to issue additional tokens.
+- The *send* method can be used to transfer a certain amount of tokens to others , and the transfer information will be recorded in the event.
+- The *balanceOf* method can be used to query the token balance of a given address.
+- The *add_privilege* method can be used to add addresses to the sponsor whitelist.
+- The *remove_privilege* method is used to remove addresses from the sponsor whitelist.
 
 <p align="center">
   <img src="./screenshots/project_coin.png" width="800px">
 </p>
 
-Conflux 智能合约使用 [Solidity](https://github.com/ethereum/solidity) 语言进行开发，打开目录下的 `contracts/Coin.sol` 文件，这个是本项目的核心代码：
+The Conflux smart contract is developed using the [Solidity](https://github.com/ethereum/solidity) language. Open the `contracts/Coin.sol` file in the directory. This is the core code of the project:
 
 ``` c++
-// 指定了 Solidity 的版本，通过 Pragmas(https://solidity.readthedocs.io/en/latest/layout-of-source-files.html#pragmas) 告诉编译器本代码可以兼容的版本为 0.5.0 到 0.7.0
+// Specify the version of Solidity, and tell the compiler that the compatible version of this code is 0.5.0 to 0.7.0 through Pragmas (https://solidity.readthedocs.io/en/latest/layout-of-source-files.html#pragmas)
 pragma solidity >=0.5.0 <0.7.0;
 
-// 导入 SponsorWhitelistControl 合约
+// import the SponsorWhitelistControl contract
 import "./SponsorWhitelistControl.sol";
 
-// 定义 Coin 的合约
+// import the SponsorWhitelistControl contract
 contract Coin {
-    // 定义了两个 State Variables(https://solidity.readthedocs.io/en/latest/structure-of-a-contract.html#state-variables)
+    // two State Variables are defined (https://solidity.readthedocs.io/en/latest/structure-of-a-contract.html#state-variables)
     address public minter;
     mapping (address => uint) private balances;
 
-    // 使用 SponsorWhitelistControl 合约连接系统合约
+    // Use the SponsorWhitelistControl contract to connect to the system contract
     SponsorWhitelistControl constant private SPONSOR = SponsorWhitelistControl(address(0x0888000000000000000000000000000000000001));
 
-    // 定义了 `Sent` 的事件，定义了 from / to / amount 列
+    // define the event of `Sent` and the from / to / amount column
     event Sent(address from, address to, uint amount);
 
-    // Coin 合约的 constructor ，在 constructor 中指定了 minter 的地址
+    // the constructor of the Coin contract, specify the address of the minter in the constructor
     constructor() public {
-        // msg.sender 为部署合约时签名的账户地址，将这个地址赋值给 minter
+        // msg.sender is the address of the account signed when deploying the contract, assign this address to minter
         minter = msg.sender;
     }
 
-    // 定义 mint 方法，通过此方法来增发代币
+    // define the mint method, through which tokens can be issued
     function mint(address receiver, uint amount) public {
         require(msg.sender == minter);
         require(amount < 1e60);
         balances[receiver] += amount;
     }
 
-    // 定义 send 方法，通过此方法可以给别的账户转账代币
+    // define the send method, through which tokens can be transferred to other accounts
     function send(address receiver, uint amount) public {
         require(amount <= balances[msg.sender], "Insufficient balance.");
         balances[msg.sender] -= amount;
         balances[receiver] += amount;
-        // 通过 emit 触发 Sent 事件，记录这笔转账的信息
+        // trigger the Sent event by the emit method to record the transfer information
         emit Sent(msg.sender, receiver, amount);
     }
 
-    // 定义 balanceOf 方法，这是个 view 类型的方法，用于查询账户余额
+    // define the balanceOf method, which is a view type method for querying the account balance
     function balanceOf(address tokenOwner) public view returns(uint balance){
       return balances[tokenOwner];
     }
 
-    // 定义了 add_privilege 方法，调用系统合约 add_privilege 方法添加地址到代付白名单
+    // define the add_privilege method, call the system contract method add_privilege to add the address to the contract sponsor whitelist
     function add_privilege(address account) public payable {
         address[] memory a = new address[](1);
         a[0] = account;
         SPONSOR.add_privilege(a);
     }
 
-    // 定义了 remove_privilege 方法，调用系统合约 remove_privilege 从合约代付白名单中移除地址
+    // define the remove_privilege method, call the system contract method remove_privilege to remove the address from the contract sponsor whitelist
     function remove_privilege(address account) public payable {
         address[] memory a = new address[](1);
         a[0] = account;
@@ -172,251 +173,251 @@ contract Coin {
 }
 ```
 
-### 编译及部署合约
+### Compile and Deploy Contract
 
-点击工具栏的 *Build* 按钮进行合约的编译，编译的结果将会保存在 `build/Coin.json` 文件中。 
+Click the *Build* button (hammer-shaped) on the toolbar to compile the contract. The compilation result will be saved in the `build/Coin.json` file. 
 
 <p align="center">
   <img src="./screenshots/button_build.png" width="200px">
 </p>
 
-在部署合约前，首先需要确认在 Explorer 中选择合约部署所使用的地址，Conflux Studio 会使用这个地址将部署合约这笔交易进行签名（选择的方法为在 *Explorer* 的地址栏中输入地址）。在合约代码的 `constructor` 中，`minter` 被赋值为 `msg.sender`，这个 `msg.sender` 就是 Explorer 所选择的地址。
+Before deploying the contract, users need to confirm the address used for contract deployment in the Explorer. Conflux Studio will use the address to sign the contract deployment transaction. The method is to enter the address in the address bar of the Explorer. In the `constructor` of the contract code, `minter` is assigned the value `msg.sender`, which is the address chosen by the Explorer.
 
-在此我们选择 `minter_key` 作为部署合约的签名者。
+Here we choose `minter_key` as the signer of the deployment contract.
 
 <p align="center">
   <img src="./screenshots/explorer_address.png" width="600px">
 </p>
 
-点击工具栏的部署按钮进行部署，部署完成后，部署结果会在 `deploys` 的 JSON 文件中，在这个文件中可以在 `contractCreated` 中找到当前合约部署的地址，后文中使用 `contract_addr` 来代表这个合约地址。
+Click the deploy button in the toolbar to deploy. After deployment, the result will be shown in the json file under the `deploys` folder. In this file, users can find the address of the current contract deployment in `contractCreated`. In the rest of this tutorial, we will use `contract_addr` to represent the contract address.
 
 <p align="center">
   <img src="./screenshots/deploy_contract_address.png" width="800px">
 </p>
 
-## 调用合约
+## Call Contract
 
-点击顶部的 *Contract* 标签切换至合约页面，在地址栏输入 `contract_addr` 地址并加载合约。
+Click the *Contract* tab at the top to switch to the contract page. Enter the `contract_addr` address in the address bar and load the contract.
 
 <p align="center">
   <img src="./screenshots/contract_coin.png" width="800px">
 </p>
 
-合约页面由三个部分组成：
+The contract page consists of three parts:
 
-- 左边为合约调用区域
-- 中间为合约数据查询区域
-- 右边为事件查询区域
+- On the left is the contract call area
+- The middle is the contract data query area
+- On the right is the event query area
 
-### 合约调用及查询
+### Contract Call and Query
 
-#### 增发代币
+#### Issue Additional Tokens
 
-点击合约调用的下拉菜单中选择 *mint* 方法，在下方的参数区域分别填入以下信息：
+Choose the *mint* method from the drop-down menu in the contract call area, and input the information in the parameter area below:
 
-- *receiver* 接收代币的地址。填入 `minter_key` 地址
-- *amount* 发行的代币总数。填入整数 1000
-- *Value* 选填项，具体可查看 [Value](#value-参数) 详解。填 0 或者不填
-- *Signer* 这笔交易的签名地址，如果没有开通代付功能，交易手续费将在这个账户地址中扣除，在合约代码中通过 `msg.sender` 获取到这个地址。填入 `minter_key` 地址
+- *receiver*: The address to receive tokens. Enter the `minter_key` address.
+- *amount*: The total number of tokens issued. Enter the integer 1000.
+- *Value*: optional. For details, please refer to the explanation of [Value](#The-Value-Parameter). Enter 0 or leave it blank.
+- *Signer*: The signature address of this transaction. If the sponsorship function is not enabled, the transaction fee will be deducted from this address. The address is obtained through `msg.sender` in the contract code. Enter the `minter_key` address.
 
-填写完成后点击执行按钮，Conflux Studio 将自动构造交易并推送到网络中。成功执行后可以在下方 *Result* 中看到这笔成功的交易。
+After inputting all the information, click the execute button, and then Conflux Studio will automatically construct the transaction and push it to the network. After successful execution, users can see the transaction in the *Result* area below.
 
 <p align="center">
   <img src="./screenshots/coin_mint.png" width="800px">
 </p>
 
-#### 查询代币余额
+#### Query Token Balance
 
-点击查询区域的下拉菜单并且选择 *balanceOf* 方法，这是在代码中定义的查询方法。在下方的 *tokenOwner* 填入 `minter_key` 地址并点击执行，就可以在下方的 *Result* 中看到 `minter_key` 账户的 Coin 代币的余额信息为 1000。使用同样方法可以查询到 `receiver_key` 账户的代币余额为 0。
+Click the drop-down menu in the contract data query area and select the *balanceOf* method. It is the query method defined in the code. Fill in the `minter_key` address in the tokenOwner below and click Execute, and then users can see in the Result area below that the Coin token balance of the `minter_key` account is 1,000. With the same method, users can see that the token balance of the `receiver_key` account is 0.
 
 <p align="center">
   <img src="./screenshots/coin_balanceof.png" width="800px">
 </p>
 
-#### 转账代币
+#### Transfer Tokens
 
-在合约调用区域选择 *send* 方法，在 *Parameters* 中分别填入：
+Click the drop-down menu in the contract call are, select the *send* method, and fill in the *Parameters*:
 
-- *receiver* 收款人地址。填入 `receiver_key` 地址
-- *amount* 转账的代币数量。填入整数 200
-- *Signer* 这笔交易的签名地址，代币转出的数量将会在这个账户中扣除。填入 `minter_key` 地址，
+- *receiver*: The receiving address. Enter the *receiver_key* address.
+- *amount*: The amount of tokens transferred. Enter the integer 200.
+- *Signer*: The signature address of this transaction, and the amount of tokens transferred out will be deducted from this account. Enter the `minter_key` address.
 
-点击执行完成转账，再次查询代币余额可以看到 `minter_key` 账户只剩下 800 代币，而 `receiver_key` 账户则从 0 变成了 200 代币。
+Click Execute to complete the transfer and users can see that there are only 800 tokens left in the `minter_key` account, and the `receiver_key` account balance has changed from 0 to 200 tokens.
 
 <p align="center">
   <img src="./screenshots/coin_send.png" width="800px">
 </p>
 
-#### Value 参数
+#### The Value Parameter
 
-Conflux 智能合约的每个调用的方法都可以带上 *Value* 参数，这是一个可选的参数。如果带上了这个值，智能合约出了在执行这个方法的逻辑外，还会额外转 Value 中指定数量的 CFX token 到 *receiver* 账户，转账金额为 *Value* 中所填的值。有些智能合约的方法需要这个参数才可以完成调用，但是在 Coin 合约不需要这个参数。
+Each method called by the Conflux smart contract may carry the *Value* parameter. It is optional. If users input the Value parameter, the smart contract will transfer a certain amount of CFX tokens specified in it to the receiver account in addition to the tokens transferred through the above mentioned method. The additional transfer amount is the value filled in the *Value* parameter. The *Value* parameter is necessary for some smart contract methods to complete calling, but it is not mandatory for the Coin contract.
 
-后文中的[代付功能](#代付功能)将会使用到 Value 参数。
+It will be used in the [sponsorship function](#sponsorship-function) we will discuss later.
 
-### 查询事件
+### Query Event
 
-在事件区域选择 *Sent* 并点击执行，下方的 *Event Logs* 可以看到转账的记录。Sent 事件的列都是由代码中的 Sent 事件的参数来定义的（其中 *epoch* 为事件发生的时间，这个为系统默认列）。在代码中定义了 `Sent` 方法的参数为 `from`， `to` 和 `amount`，分别对应了这笔转账的发起者地址，接受者地址以及转账的数量。
+Select the *Sent* method in the event query area and click Execute. Users can see the transfer records in the *Event Logs* below. The columns of the Sent events are defined by the parameters of the Sent event in the code (epoch is the time when the event occurred, and it is default data of the system). The parameters defining the `Sent` method are `from`, `to` and `amount`, which correspond to the address of the originator, address of the receiver and the amount of the transferred tokens.
 
 <p align="center">
   <img src="./screenshots/coin_sent.png" width="800px">
 </p>
 
-## 代付功能
+## sponsorship function
 
-Conflux Studio 支持 Conflux 系统合约提供的[代付功能](https://developer.conflux-chain.org/docs/conflux-rust/internal_contract/internal_contract#sponsorship-for-usage-of-contracts)。
+Conflux Studio supports the [sponsorship function](https://developer.conflux-chain.org/docs/conflux-rust/internal_contract/internal_contract#sponsorship-for-usage-of-contracts) provided by the Conflux system contract.sponsorship function
 
-通过系统合约可以为别的合约设置代付功能，系统合约提供给了四个方法：
+Through the system contract, the sponsorship function can be set for other contracts by four methods:
 
-- `add_privilege` 添加合约代付白名单，在代付白名单中的地址调用该合约的方法时不需要付手续费，费用由代付账户支付。其中添加特殊地址 `0x0000000000000000000000000000000000000000` 代表为所有调用该合约的地址代付费用
-- `remove_privilege` 移除合约代付白名单
-- `set_sponsor_for_collateral` 设置合约储存费 (collateral for storage) 的代付账户及代付金额
-- `set_sponsor_for_gas` 设置合约手续费 (gas fee) 的代付账户、代付金额及每笔交易代付金额上限
+- `add_privilege`: add addresses to the contract sponsor whitelist. When an address in the sponsor whitelist calls the method of this contract, the handling fee will not be paid by the calling address but by the sponsor account. Adding the special address `0x0000000000000000000000000000000000000000` means that the caller wants to pay for all addresses that call this contract.
+- `remove_privilege`: remove addresses from the contract sponsor whitelist.
+- `set_sponsor_for_collateral`: set the sponsor account and amount of the collateral for storage.
+- `set_sponsor_for_gas`: set the gas fee sponsor account, the amount and the upper limit of the amount for each transaction
 
-启用一个合约的代付需要设置代付的账户、代付金额的及代付白名单。教程将会使用 Conflux Studio 通过系统合约设置代付账户及代付金额，通过 Coin 合约添加代付白名单。设置完成后，`minter_key` 账户调用 Coin 合约的方法时将不会被扣除手续费，手续费由 `sponsor_key` 账户代付。
+Activating the sponsorship function of a contract requires to set up a sponsor account, amount, and a sponsor whitelist. In this tutorial, we will use Conflux Studio to set the sponsor account and amount through the system contract, and add addresses to the whitelist through the Coin contract. After settings, the `minter_key` account will not be deducted the handling fee when calling the methods of the Coin contract, and the fee will be paid by the `sponsor_key` account.
 
-### 设置代付账户及代付金额
+### Set Sponsor Account and Sponsor Amount
 
-在 Conflux Studio 中访问系统合约地址 `0x0888000000000000000000000000000000000001`，在合约调用区域能看到前文中提及的四个设置代付的方法。
+Visit the system contract address `0x0888000000000000000000000000000000000001` in Conflux Studio, and users can see the four methods to set sponsors in the contract call area mentioned previously.
 
 <p align="center">
   <img src="./screenshots/sponsor_methods.png" width="800px">
 </p>
 
-选择 `set_sponsor_for_collateral` 方法，该方法有三个参数：
+Choose the `set_sponsor_for_collateral` method. It has three parameters:
 
-- *contract_addr* 设置代付的合约地址。填入 `contract_addr`
-- *Value* 设置代付金额。填入整数 40
-- *Signer* 代付账户地址。填入 `sponsor_key` 地址
+- *contract_addr*: Set the contract address for sponsor. Enter `contract_addr`.
+- *Value*: set the sponsor amount. Enter the integer 40.
+- *Signer*: sponsor account address. Enter the `sponsor_key` address.
 
 <p align="center">
   <img src="./screenshots/sponsor_collateral.png" width="800px">
 </p>
 
-填好以上参数并执行运行，系统合约将为 Coin 合约设置好储存费代付账户，此时 `sponsor_key` 账户将会被扣除 40 CFX。
+Enter the above parameters and execute. The system contract will set up the sponsor of the collateral for storage of the Coin contract, and the `sponsor_key` account will be deducted 40 CFX.
 
-选择 `set_sponsor_for_gas` 方法，该方法有四个参数：
+Choose the `set_sponsor_for_gas` method. It has four parameters:
 
-- *contract_addr* 设置代付的合约地址。填入 `contract_addr`
-- *upper_bound* 设置每笔交易代付的上限。填入 1000000000000
-- *Value* 设置代付金额。填入整数 40
-- *Signer* 代付账户地址。填入 `sponsor_key` 地址
+- *contract_addr*: Set the contract address for sponsor. Enter `contract_addr`.
+- *upper_bound*: set the upper limit of the sponsorship for each transaction. Enter 1000000000000.
+- *Value*: set the sponsor amount. Enter the integer 40.
+- *Signer*: sponsor account address. Enter the `sponsor_key` address.
 
 <p align="center">
   <img src="./screenshots/sponsor_gas.png" width="800px">
 </p>
 
-填好以上参数并再次执行运行，系统合约将为 Coin 合约设置好手续费代付账户，此时 `sponsor_key` 账户将会再次被扣除 40 CFX。
+Enter the above parameters and execute. The system contract will set up the sponsor account for the transaction fees of the Coin contract. And now the `sponsor_key` account will be deducted again by 40 CFX.
 
-完成这两个方法的调用后 Coin 合约代付账户便设置好了，`sponsor_key` 账户将为 Coin 合约的手续费和储存费各提供为 40 CFX Token 的代付服务。由于目前代付白名单中并没有账户地址，因此还需要添加白名单地址才能完成代付设置。
+After the call of these two methods, the Coin contract sponsor account is set up, and the `sponsor_key` account will pay 40 CFX for the handling fee and 40 for the collateral for storage of the Coin contract. Since there is no account address in the current sponsor whitelist, it is necessary to add addresses to the whitelist to complete the sponsor setting.
 
-### 添加代付白名单
+### Add Addresses to the Sponsor Whitelist
 
-在 Coin 合约中集成了设置代付白名单的方法，通过调用此方法可以添加或删除代付白名单。
+The method of setting the sponsor whitelist is integrated in the Coin contract. By calling this method, users can add/delete addresses to/from the sponsor whitelist.
 
-在 Conflux Studio 中访问 `contract_addr` 合约，选择 *add_privilege* 方法：
+Access the `contract_addr` contract in Conflux Studio and select the *add_privilege* method:
 
-- *account* 添加白名单的地址。填入 `minter_key` 地址
-- *Value* 不填
-- *Signer* 这笔交易的签名地址。填入 `minter_key` 地址
+- *account*: add the address to the whitelist. Enter the `minter_key` address.
+- *Value*: leave it blank.
+- *Signer*: The signature address of this transaction. Enter the `minter_key` address.
 
-运行后就成功设置了代付白名单了，至此 Coin 合约的代付功能设置好了。
+Execute, and then the sponsor whitelist and the sponsorship function of the Coin contract will be ready.
 
-### 代付测试
+### Test Sponsorship Function
 
-在进行代付测试前，先[查询](#申请测试-CFX)并记录下 `minter_key` 账户的 CFX 余额。例如本教程中，`minter_key` 的初始余额为 97.6210937497093952 CFX。
+Before testing the sponsorship function, please check and record the CFX balance of the `minter_key` account. For example, in this tutorial, the initial balance of `minter_key` is 97.6210937497093952 CFX.
 
-回到 Coin 合约调用页面，再次调用 *mint* 方法并使用 `minter_key` 地址[增发代币](#增发代币) 1000，完成代币增发后再次查询 `minter_key` 的余额，仍然为 97.6210937497093952 CFX。
+Go back to the contract call page of the Coin contract, call the mint method and use the minter_key address to issue 1,000 additional tokens. And then query the balance of the minter_key address again, which is still 97.6210937497093952 CFX.Issue Additional Tokens
 
-可以看到增发代币的这笔交易，原本应该由 `minter_key` 账户支付的手续费，变成了由 `sponsor_key` 账户支付。
+Users can see that in the transaction of additional token issuance, the handling fee that should have been paid by the `minter_key` account is paid by the `sponsor_key` account.
 
-## 前端项目
+## Front-end Project
 
-前端项目源码可以前往 [Conflux 前端](https://github.com/ObsidianLabs/conflux-frontend-react)。
+Users can find the source code of the front-end project in the [Conflux front-end](https://github.com/ObsidianLabs/conflux-frontend-react) repository.
 
-### 预备
+### Preparation
 
-#### 下载项目并安装依赖
+#### Download the Project and Install Dependencies
 
-- 下载前端项目：`git clone https://github.com/ObsidianLabs/conflux-frontend-react`
-- 使用 `npm install` 或者 `yarn` 进行项目依赖安装
+- Download the front-end project: `git clone https://github.com/ObsidianLabs/conflux-frontend-react`
+- Use `npm install` or `yarn` to install project dependencies.
 
-#### Conflux Portal 的安装及配置
+#### Installation and Configuration of Conflux Portal
 
-Conflux Portal 是由 Conflux 提供的浏览器插件，目前提供了 Chrome 及 Firefox 的支持，用户可以使用 Conflux Portal 进行私钥的管理以及交易签名。
+Conflux Portal is a browser plug-in provided by Conflux. Currently, Conflux Portal is supported by Chrome and Firefox. Users can use Conflux Portal to manage private keys and sign transactions.
 
-前往 [Conflux Portal GitHub](https://github.com/Conflux-Chain/conflux-portal/releases/latest) 下载安装。项目的源代码在 [GitHub](https://github.com/Conflux-Chain/conflux-portal ) 中可以找到。
+Go to [Conflux Portal GitHub](https://github.com/Conflux-Chain/conflux-portal/releases/latest) to download and install. The source code of the project can be found in [GitHub](https://github.com/Conflux-Chain/conflux-portal).
 
-在这里需要将 Conflux Studio 中生成的地址导入到 Conflux Portal 中。完成插件安装后，在 Conflux Portal 的页面中选择 *Import*，将 Conflux Studio 中的 `minter_key` 的私钥（在[创建钱包](#创建钱包)章节中介绍了如何将私钥导出）粘贴到输入框中，点击 *Import* 按钮完成私钥导入。
+Here users need to import the addresses generated in Conflux Studio into Conflux Portal. After installation, click *Import*, paste the private key of `minter_key` in Conflux Studio (how to export the private key is introduced in the Create Wallet part previously), and click the Import button to import the private key.
 
 <p align="center">
   <img src="./screenshots/conflux_portal.png" width="400px">
 </p>
 
-### 运行前端项目
+### Run the Front-end Project
 
-在运行项目之前，需要修改一些默认的环境变量。
+Before running the project, users need to modify some default environment variables.
 
-在[前面的教程](#编译及部署合约)中部署合约后会生成一个 `contractCreated`，这个值便是部署在网络中智能合约的地址。打开项目根目录并找到 `.env` 文件，这个文件提供了项目的[环境变量](#前端项目解析)，将 `REACT_APP_CONFLUX_COIN_ADDRESS` 的值修改为 `contract_addr`。
+After deploying the contract , `contractCreated` will be generated, which is the address of the smart contract deployed in the network. Open the root directory of the project and find the `.env` file that includes the environment variables of the project. Change the value of `REACT_APP_CONFLUX_COIN_ADDRESS` to `contract_addr`.
 
-使用 `yarn start` 启动前端项目，开发服务器运行起来后会在浏览器中打开前端页面（如果没有打开，请在浏览器中访问 http://localhost:3000）。
+Use `yarn start` to start the project. When the development server runs, the front-end page will be opened in the browser (if not, please visit http://localhost:3000 in the browser).
 
-项目运行起来后，页面将显示四个卡片信息，分别为
-- 左上角 Conflux 网络信息模块
-- 右上角 Conflux Portal 模块
-- 左下角 Coin 合约模块
-- 右下角 SponsorWhitelistControl 合约模块
+When the project starts, the interface will display four modules:
+- Conflux network information module in the upper left
+- Conflux Portal module in the upper right
+- Coin contract module in the lower left
+- SponsorWhitelistControl contract module in the lower right 
 
 <p align="center">
   <img src="./screenshots/frontend.png" width="800px">
 </p>
 
-#### 连接 Conflux Portal
+#### Connect to Conflux Portal
 
-点击右上角组件中的 *Connect to Conflux Portal* 按钮，Conflux Portal 页面将被打开，输入密码和选择账户后完成连接。连接成功后，将会在按钮下看到当前连接的账户地址以及账户中的 CFX 余额。
+Click the C*onnect to Conflux Portal* button in the Conflux Portal module to open Conflux Portal, enter the password and select the account to connect. After connection, you will see the currently connected account address and the CFX balance in the account below the button.
 
 <p align="center">
   <img src="./screenshots/frontend_portal.png" width="600px">
 </p>
 
-#### 运行 Coin 合约代币增发和代币转账操作
+#### Run Coin Contract Token Issuance and Transfer Operations
 
-左下角的组件为 Coin 合约组件，可以通过这个组件调用代币增发和代币转账功能。
+Users can use the token issuance and token transfer functions with the Coin contract module in the lower left.
 
-- 代币增发：选择 *mint* 方法并在 *receiver* 中填入增发地址 `minter_key` 地址和在 *amount* 中填入增发代币的数量 100，点击 *Push Transaction*，在弹出的 *ConfluxPortal Notification* 窗口中点击 *Confirm* 按钮来确认交易。
+- Additional token issuance: select the *mint* method and enter the `minter_key` address (the token issuance address) in the *receiver* bar and 100 (the number of tokens) in the *amount* bar, click Push Transaction, and click the *Confirm* button in the pop-up *ConfluxPortal Notification* window to confirm the transaction.
 
-- 代币转账：选择 *send* 方法并在 *receiver* 中填入收款人地址 `receiver_key` 地址和在 *amount* 中转账代币的数量 20，点击 *Push Transaction*，在弹出的 *ConfluxPortal Notification* 窗口中点击 *Confirm* 按钮来确认交易。
+- Additional token issuance: select the mint method and enter the `minter_key` address (the token issuance address) in the *receiver* bar and 100 (the number of tokens) in the *amount* bar, click Push Transaction, and click the *Confirm* button in the pop-up *ConfluxPortal Notification* window to confirm the transaction.
 
 <p align="center">
   <img src="./screenshots/frontend_mint.png" width="600px">
 </p>
 
-#### 查看 Coin 合约中的余额
+#### Check the Balance in the Coin Contract
 
-选择 *balanceOf* 方法并在 *tokenOwner* 输入框中填入查询的地址，点击 *Query Data* 按钮可以查询到账户的余额。 
+Select the *balanceOf* method and enter the query address in the *tokenOwner* box, and click the *Query Data* button to view the account balance. 
 
 <p align="center">
   <img src="./screenshots/frontend_balanceof.png" width="600px">
 </p>
 
-#### 查看 Sent 事件
+#### View Sent Event
 
-选择 *Sent* 事件并点击 *Query Data* 可以查询到转账操作所触发的转账事件的记录。
+Select the *Sent* event and click *Query Data* to see the record of transfer events triggered by transfer operations.
 
 <p align="center">
   <img src="./screenshots/frontend_sent.png" width="600px">
 </p>
 
-### 前端项目解析
+### Front-end Project Analysis
 
-项目使用 [React](https://reactjs.org) 进行开发。主要由三大部分组成：视图组件、js-conflux-sdk 以及 Conflux Portal。
+The project uses [React](https://reactjs.org) for development. It is mainly composed of three parts: view components, js-conflux-sdk and Conflux Portal.
 
-项目根目录下的 `.env` 环境变量，在这里定义了两个环境变量，分别为
-- `REACT_APP_CONFLUX_NODE_RPC`：Conflux 的网络节点地址，目前默认为 Oceanus 网络的地址
-- `REACT_APP_CONFLUX_COIN_ADDRESS`：已部署的 Coin 智能合约地址
+The `.env` environment variable under the project root directory defines two environment variables:
+- `REACT_APP_CONFLUX_NODE_RPC`: Conflux network node address. Currently the default is the address of Oceanus network
+- `REACT_APP_CONFLUX_COIN_ADDRESS`: the address of the deployed Coin smart contract.
 
-#### 视图组件
+#### View Component
 
-视图组件在项目的 `src/components` 中，其中 `App.js` 为页面的主入口，负责页面的排列及合约信息的读取。
+The view component is in the `src/components` of the project, where `App.js` is the main entrance of the page. It is used for page layout and contract information reading.
 
 <p align="center">
   <img src="./screenshots/frontend_components.png" width="400px">
@@ -424,29 +425,29 @@ Conflux Portal 是由 Conflux 提供的浏览器插件，目前提供了 Chrome 
 
 ##### ConfluxNetwork.js
 
-负责渲染 Conflux 网络信息，`Node URL` 的值为 `.env` 环境变量文件下的 `REACT_APP_CONFLUX_NODE_RPC` 设置的值（默认为 Oceanus 网络）。
+Used for rendering Conflux network information. The value of `Node URL` is the value set by `REACT_APP_CONFLUX_NODE_RPC` in the `.env` environment variable file (the default is Oceanus network).
 
 ##### ConfluxPortal.js
 
-负责渲染 Conflux Portal 的连接信息，并提供了连接 Conflux Portal 的交互按钮。
+Used for rendering the connection information of Conflux Portal and provides interactive buttons for connecting to Conflux Portal.
 
-- `connectConfluxPortal` 调用 Conflux Portal 的 `enable` 方法启用 conflux （conflux portal 实例由浏览器插件注入到 windows.portal 中），完成 `enable` 后调用 `getAccount` 方法获取到 Portal 中的账户。
-- `refreshBalance` 调用 Conflux SDK 的 `getBalance` 方法来更新账户余额信息
-- `renderPortalButton` 根据当前不同的状态，渲染连接 Portal 的按钮
+- `connectConfluxPortal`: used to call the `enable` method of Conflux Portal to start Conflux (the conflux portal instance is injected into windows.portal by the browser plug-in). After starting, call the `getAccount` method to get the account in the Portal.
+- `refreshBalance`: used to call the `getBalance` method of the Conflux SDK to update the account balance information.
+- `renderPortalButton`: render the button to connect to the Portal according to the current state
 
 ##### ConfluxContract.js
 
-负责渲染 Conflux 合约信息，本项目中提供了 Coin 和 SponsorWhitelistControl 两个合约。
+Used for rendering Conflux contract information. Two contracts, Coin and SponsorWhitelistControl, are provided in this project.
 
-`ConfluxContract.js` 由三个组件组成，分别为：
+`ConfluxContract.js` consists of three components, namely:
 
-- `ConfluxContract` 负责根据传入的合约 abi 来渲染合约的信息，包括合约地址、合约方法和事件，合约提交的交互逻辑及显示执行后的结果
-- `ContractMethods` 负责渲染合约 abi 中的方法和事件的表单及相对应的按钮
-- `ConfluxForm` 负责根据方法或事件的 abi 来渲染输入表单
+- `ConfluxContract`: render the information of the contract according to the incoming contract abi, including the contract address, contract method and event, the interactive logic submitted by the contract and the results after execution.
+- `ContractMethods`: render the information of the contract according to the incoming contract abi, including the contract address, contract method and event, the interactive logic submitted by the contract and the results after execution.
+- `ConfluxForm`: render the input form according to the abi of the method or event.
 
 #### lib
 
-lib 在项目的 `src/lib` 中，这里的文件主要是为视图提供包括连接网络、构造交易、获取账户、读取合约等服务。
+lib is in the `src/lib` of the project, where the files are mainly to provide services for the view component, including connecting to the network, constructing transactions, obtaining accounts, and reading contracts.
 
 <p align="center">
   <img src="./screenshots/frontend_lib.png" width="400px">
@@ -454,27 +455,27 @@ lib 在项目的 `src/lib` 中，这里的文件主要是为视图提供包括�
 
 ##### conflux.js
 
-`conflux.js` 是 `js-conflux-sdk` 的封装。[`js-conflux-sdk`](https://github.com/Conflux-Chain/js-conflux-sdk) 是由 Conflux 提供的 JavaScript SDK，本前端项目使用 SDK 来连接 Conflux 网络，和合约进行交互以及构造合约中的实例。
+`conflux.js` is the package of [`js-conflux-sdk`](https://github.com/Conflux-Chain/js-conflux-sdk). It is the JavaScript SDK provided by Conflux. In this front-end project, we use SDK to connect to the Conflux network, interact with the contract and construct instances in the contract.
 
 ##### conflux-portal.js
 
-`conflux-portal.js` 是 Conflux Portal 的封装，本前端项目通过调用浏览器插件来完成交易的签名。调用 Conflux Portal 提供的 `enable` 方法可以启动项目和 Conflux Portal 的连接（需要提前检查浏览器是否正确安装插件，在 constructor 中通过检查 `window.conflux` 是否为空来判断）。`conflux-portal.js` 提供了获取账户 `getAccount` 和发送交易 `sendTransaction` 两个主要的方法。
+`conflux-portal.js` is the package of Conflux Portal. In this project, we use the browser plug-in Conflux Portal to finish the transaction signature. Calling the `enable` method provided by Conflux Portal can start the connection between the project and Conflux Portal (users need to check whether they have correctly installed the plug-in in their browser by checking whether `window.conflux` is empty in the constructor). `conflux-portal.js` provides the two main methods to get accounts and send transactions: `getAccount` and `sendTransaction`.
 
 ##### abi
 
-`lib/abi` 文件夹下提供了两个 json 文件，分别为 `Coin.json` 和 `SponsorWhitelistControl.json`，这两个文件是构造合约所需要使用的 abi 文件。
+Two json files are provided under the `lib/abi` folder, namely `Coin.json` and `SponsorWhitelistControl.json`. These two are the abi files needed to construct the contract.
 
-## 总结
+## Summary
 
-在本开发教程中，我们学习了如何使用 Conflux Studio 来完成一个完整的 Coin DApp 开发，其中包括了：
+In this development tutorial, we introduced how to use Conflux Studio to develop a complete Coin DApp, including
 
-- 使用钥匙对管理器创建账户及导出账户私钥
-- 切换 Oceanus 网络，查看网络信息
-- 账户申请 CFX Token
-- 创建、编译并部署项目
-- 解析 Coin 合约代码，学习如何编写合约的读写方法及事件
-- 使用合约浏览器调用 Coin 合约的代币增发、转账、查询余额及查询事件
-- 设置并使用智能合约的代付功能
-- 将私钥导入 Conflux Portal 并连接前端项目
-- 在前端项目中调用 Coin 合约的代币增发、转账、查询余额及查询事件
-- 解析前端项目代码，学习如何通过 Conflux Portal 和 Conflux JavaScript SDK 连接网络并实现交易
+- Use the keypair manager to create an account and export the account private key
+- Switch to Oceanus network and view network information
+- Apply for CFX Tokens in the account
+- Create, compile and deploy project
+- Analyze the Coin contract code, learn how to write the reading and writing methods and events of the contract
+- Use the contract explorer to call the token issuance, transfer, balance query and event query methods of the Coin contract
+- Set up and use the sponsorship function of the smart contract
+- Import the private key into Conflux Portal and connect to the front-end project
+- Call the additional token issuance, transfer, balance query and event query methods of the Coin contract in the front-end project
+- Analyze the front-end project code, learn how to connect to the network and implement transactions through Conflux Portal and Conflux JavaScript SDK
