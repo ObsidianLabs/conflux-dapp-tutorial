@@ -1,5 +1,7 @@
 # Conflux DApp 开发教程
 
+[English](https://github.com/ObsidianLabs/conflux-dapp-tutorial/blob/master/README.md) | 简体中文
+
 ## 目录
 
 - [简介](#简介)

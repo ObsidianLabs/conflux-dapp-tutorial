@@ -1,5 +1,7 @@
 # Tutorial for Conflux Studio DApp Development
 
+English | [简体中文](https://github.com/ObsidianLabs/conflux-dapp-tutorial/blob/master/README-CN.md)
+
 ## Catelog
 
 - [Introduction](#Introduction)
