@@ -182,15 +182,15 @@ contract Coin {
   <img src="./screenshots/button_build.png" width="200px">
 </p>
 
-在部署合约前，首先需要确认在 Explorer 中选择合约部署所使用的地址，Conflux Studio 会使用这个地址将部署合约这笔交易进行签名（选择的方法为在 *Explorer* 的地址栏中输入地址）。在合约代码的 `constructor` 中，`minter` 被赋值为 `msg.sender`，这个 `msg.sender` 就是 Explorer 所选择的地址。
 
-在此我们选择 `minter_key` 作为部署合约的签名者。
+点击工具栏的部署按钮进行部署，部署参数窗口将被打开，在这里可以定义构造函数参数，签名者（signer），gas limit 和 gas price。在合约代码的 `constructor` 中，`minter` 被赋值为 `msg.sender`，这个 `msg.sender` 就是参数窗口中所选的 signer 地址。
 
 <p align="center">
-  <img src="./screenshots/explorer_address.png" width="600px">
+  <img src="./screenshots/deploy_parameters.png" width="800px">
 </p>
 
-点击工具栏的部署按钮进行部署，部署完成后，部署结果会在 `deploys` 的 JSON 文件中，在这个文件中可以在 `contractCreated` 中找到当前合约部署的地址，后文中使用 `contract_addr` 来代表这个合约地址。
+
+部署完成后，部署结果会在 `deploys` 的 JSON 文件中，在这个文件中可以在 `contractCreated` 中找到当前合约部署的地址，后文中使用 `contract_addr` 来代表这个合约地址。
 
 <p align="center">
   <img src="./screenshots/deploy_contract_address.png" width="800px">

@@ -183,15 +183,13 @@ Click the *Build* button (hammer-shaped) on the toolbar to compile the contract.
   <img src="./screenshots/button_build.png" width="200px">
 </p>
 
-Before deploying the contract, users need to confirm the address used for contract deployment in the Explorer. Conflux Studio will use the address to sign the contract deployment transaction. The method is to enter the address in the address bar of the Explorer. In the `constructor` of the contract code, `minter` is assigned the value `msg.sender`, which is the address chosen by the Explorer.
-
-Here we choose `minter_key` as the signer of the deployment contract.
+Click the deploy button in the toolbar to open the *Deploy* modal. You can enter constructor parameters, signer, gas limit and gas price for the deployment. In the `constructor` of the contract code, `minter` is assigned the value `msg.sender`, which is the address of signer.
 
 <p align="center">
-  <img src="./screenshots/explorer_address.png" width="600px">
+  <img src="./screenshots/deploy_parameters.png" width="800px">
 </p>
 
-Click the deploy button in the toolbar to deploy. After deployment, the result will be shown in the json file under the `deploys` folder. In this file, users can find the address of the current contract deployment in `contractCreated`. In the rest of this tutorial, we will use `contract_addr` to represent the contract address.
+After deployment, the result will be shown in the json file under the `deploys` folder. In this file, users can find the address of the current contract deployment in `contractCreated`. In the rest of this tutorial, we will use `contract_addr` to represent the contract address.
 
 <p align="center">
   <img src="./screenshots/deploy_contract_address.png" width="800px">
