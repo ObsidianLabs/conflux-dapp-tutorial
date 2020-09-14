@@ -183,10 +183,10 @@ contract Coin {
 </p>
 
 
-点击工具栏的部署按钮进行部署，部署参数窗口将被打开，在这里可以定义构造器参数，签名者（signer），gas limit 和 gas price。在合约代码的 `constructor` 中，`minter` 被赋值为 `msg.sender`，这个 `msg.sender` 就是参数窗口中所选的 signer 地址。
+点击工具栏的部署按钮进行部署，部署参数窗口将被打开，在这里可以定义构造函数参数，签名者（signer），gas limit 和 gas price。在合约代码的 `constructor` 中，`minter` 被赋值为 `msg.sender`，这个 `msg.sender` 就是参数窗口中所选的 signer 地址。
 
 <p align="center">
-  <img src="./screenshots/deploy_parameters.png" width="720px">
+  <img src="./screenshots/deploy_parameters.png" width="800px">
 </p>
 
 

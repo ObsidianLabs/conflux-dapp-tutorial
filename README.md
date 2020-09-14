@@ -183,7 +183,7 @@ Click the *Build* button (hammer-shaped) on the toolbar to compile the contract.
   <img src="./screenshots/button_build.png" width="200px">
 </p>
 
-Click the deploy button in the toolbar to deploy. A parameters window will be shown and you can select signer, constructor parameters, gas limit and gas price for the deployment. In the `constructor` of the contract code, `minter` is assigned the value `msg.sender`, which is the address of signer.
+Click the deploy button in the toolbar to open the *Deploy* modal. You can enter constructor parameters, signer, gas limit and gas price for the deployment. In the `constructor` of the contract code, `minter` is assigned the value `msg.sender`, which is the address of signer.
 
 <p align="center">
   <img src="./screenshots/deploy_parameters.png" width="800px">
