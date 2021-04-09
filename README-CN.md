@@ -103,8 +103,8 @@ Coin 合约是一个简单的代币合约，其中：
 - 通过 *mint* 方法可以增发代币数量
 - 通过 *send* 方法可以将一定数量的代币转账给别的用户，同时会在事件中记录下这笔转账的信息
 - 通过 *balanceOf* 方法可以查询到指定账户地址的代币余额
-- 通过 *add_privilege* 方法可以为合约添加代付白名单
-- 通过 *remove_privilege* 方法可以为合约移除代付白名单
+- 通过 *addPrivilege* 方法可以为合约添加代付白名单
+- 通过 *removePrivilege* 方法可以为合约移除代付白名单
 
 <p align="center">
   <img src="./screenshots/project_coin.png" width="800px">
@@ -158,25 +158,25 @@ contract Coin {
       return balances[tokenOwner];
     }
 
-    // 定义了 add_privilege 方法，调用系统合约 add_privilege 方法添加地址到代付白名单
-    function add_privilege(address account) public payable {
+    // 定义了 addPrivilege 方法，调用系统合约 addPrivilege 方法添加地址到代付白名单
+    function addPrivilege(address account) public payable {
         address[] memory a = new address[](1);
         a[0] = account;
-        SPONSOR.add_privilege(a);
+        SPONSOR.addPrivilege(a);
     }
 
-    // 定义了 remove_privilege 方法，调用系统合约 remove_privilege 从合约代付白名单中移除地址
-    function remove_privilege(address account) public payable {
+    // 定义了 removePrivilege 方法，调用系统合约 removePrivilege 从合约代付白名单中移除地址
+    function removePrivilege(address account) public payable {
         address[] memory a = new address[](1);
         a[0] = account;
-        SPONSOR.remove_privilege(a);
+        SPONSOR.removePrivilege(a);
     }
 }
 ```
 
 ### 编译及部署合约
 
-点击工具栏的 *Build* 按钮进行合约的编译，编译的结果将会保存在 `build/Coin.json` 文件中。 
+点击工具栏的 *Build* 按钮进行合约的编译，编译的结果将会保存在 `build/Coin.json` 文件中。
 
 <p align="center">
   <img src="./screenshots/button_build.png" width="200px">
@@ -267,12 +267,12 @@ Conflux 智能合约的每个调用的方法都可以带上 *Value* 参数，这
 
 Conflux Studio 支持 Conflux 系统合约提供的[代付功能](https://developer.conflux-chain.org/docs/conflux-rust/internal_contract/internal_contract#sponsorship-for-usage-of-contracts)。
 
-通过系统合约可以为别的合约设置代付功能，系统合约提供给了四个方法：
+通过系统合约可以为别的合约设置代付功能，系统合约提供给了多个方法，其中：
 
-- `add_privilege` 添加合约代付白名单，在代付白名单中的地址调用该合约的方法时不需要付手续费，费用由代付账户支付。其中添加特殊地址 `0x0000000000000000000000000000000000000000` 代表为所有调用该合约的地址代付费用
-- `remove_privilege` 移除合约代付白名单
-- `set_sponsor_for_collateral` 设置合约储存费 (collateral for storage) 的代付账户及代付金额
-- `set_sponsor_for_gas` 设置合约手续费 (gas fee) 的代付账户、代付金额及每笔交易代付金额上限
+- `addPrivilege` 添加合约代付白名单，在代付白名单中的地址调用该合约的方法时不需要付手续费，费用由代付账户支付。其中添加特殊地址 `0x0000000000000000000000000000000000000000` 代表为所有调用该合约的地址代付费用
+- `removePrivilege` 移除合约代付白名单
+- `setSponsorForCollateral` 设置合约储存费 (collateral for storage) 的代付账户及代付金额
+- `setSponsorForGas` 设置合约手续费 (gas fee) 的代付账户、代付金额及每笔交易代付金额上限
 
 启用一个合约的代付需要设置代付的账户、代付金额的及代付白名单。教程将会使用 Conflux Studio 通过系统合约设置代付账户及代付金额，通过 Coin 合约添加代付白名单。设置完成后，`minter_key` 账户调用 Coin 合约的方法时将不会被扣除手续费，手续费由 `sponsor_key` 账户代付。
 
@@ -284,7 +284,7 @@ Conflux Studio 支持 Conflux 系统合约提供的[代付功能](https://develo
   <img src="./screenshots/sponsor_methods.png" width="800px">
 </p>
 
-选择 `set_sponsor_for_collateral` 方法，该方法有三个参数：
+选择 `setSponsorForCollateral` 方法，该方法有三个参数：
 
 - *contract_addr* 设置代付的合约地址。填入 `contract_addr`
 - *Value* 设置代付金额。填入整数 40
@@ -296,7 +296,7 @@ Conflux Studio 支持 Conflux 系统合约提供的[代付功能](https://develo
 
 填好以上参数并执行运行，系统合约将为 Coin 合约设置好储存费代付账户，此时 `sponsor_key` 账户将会被扣除 40 CFX。
 
-选择 `set_sponsor_for_gas` 方法，该方法有四个参数：
+选择 `setSponsorForGas` 方法，该方法有四个参数：
 
 - *contract_addr* 设置代付的合约地址。填入 `contract_addr`
 - *upper_bound* 设置每笔交易代付的上限。填入 1000000000000
@@ -315,7 +315,7 @@ Conflux Studio 支持 Conflux 系统合约提供的[代付功能](https://develo
 
 在 Coin 合约中集成了设置代付白名单的方法，通过调用此方法可以添加或删除代付白名单。
 
-在 Conflux Studio 中访问 `contract_addr` 合约，选择 *add_privilege* 方法：
+在 Conflux Studio 中访问 `contract_addr` 合约，选择 *addPrivilege* 方法：
 
 - *account* 添加白名单的地址。填入 `minter_key` 地址
 - *Value* 不填
@@ -394,7 +394,7 @@ Conflux Portal 是由 Conflux 提供的浏览器插件，目前提供了 Chrome 
 
 #### 查看 Coin 合约中的余额
 
-选择 *balanceOf* 方法并在 *tokenOwner* 输入框中填入查询的地址，点击 *Query Data* 按钮可以查询到账户的余额。 
+选择 *balanceOf* 方法并在 *tokenOwner* 输入框中填入查询的地址，点击 *Query Data* 按钮可以查询到账户的余额。
 
 <p align="center">
   <img src="./screenshots/frontend_balanceof.png" width="600px">

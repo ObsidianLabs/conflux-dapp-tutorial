@@ -10,11 +10,11 @@ English | [简体中文](https://github.com/ObsidianLabs/conflux-dapp-tutorial/b
 - [Call Contract](#Call-Contract)
 - [sponsorship function](#sponsorship-function)
 - [Front-end Project](#Front-end-Project)
-- [Summary](#Summary)
+- [Summary](#Summary
 
 ## Introduction
 
-We will use [Conflux Studio](https://github.com/ObsidianLabs/ConfluxStudio) to develop a simple token application - Coin, under the Oceanus network in this tutorial. 
+We will use [Conflux Studio](https://github.com/ObsidianLabs/ConfluxStudio) to develop a simple token application - Coin, under the Oceanus network in this tutorial.
 
 With this tutorial, users can learn how to write and call Conflux smart contracts, configure smart contract sponsors, and how to use web front-end projects to interact with smart contracts to develop a complete DApp that includes the front-end and smart contracts.
 
@@ -104,8 +104,8 @@ The Coin contract is a simple token contract in which:
 - The *mint* method can be used to issue additional tokens.
 - The *send* method can be used to transfer a certain amount of tokens to others , and the transfer information will be recorded in the event.
 - The *balanceOf* method can be used to query the token balance of a given address.
-- The *add_privilege* method can be used to add addresses to the sponsor whitelist.
-- The *remove_privilege* method is used to remove addresses from the sponsor whitelist.
+- The *addPrivilege* method can be used to add addresses to the sponsor whitelist.
+- The *removePrivilege* method is used to remove addresses from the sponsor whitelist.
 
 <p align="center">
   <img src="./screenshots/project_coin.png" width="800px">
@@ -159,25 +159,25 @@ contract Coin {
       return balances[tokenOwner];
     }
 
-    // define the add_privilege method, call the system contract method add_privilege to add the address to the contract sponsor whitelist
-    function add_privilege(address account) public payable {
+    // define the addPrivilege method, call the system contract method addPrivilege to add the address to the contract sponsor whitelist
+    function addPrivilege(address account) public payable {
         address[] memory a = new address[](1);
         a[0] = account;
-        SPONSOR.add_privilege(a);
+        SPONSOR.addPrivilege(a);
     }
 
-    // define the remove_privilege method, call the system contract method remove_privilege to remove the address from the contract sponsor whitelist
-    function remove_privilege(address account) public payable {
+    // define the removePrivilege method, call the system contract method removePrivilege to remove the address from the contract sponsor whitelist
+    function removePrivilege(address account) public payable {
         address[] memory a = new address[](1);
         a[0] = account;
-        SPONSOR.remove_privilege(a);
+        SPONSOR.removePrivilege(a);
     }
 }
 ```
 
 ### Compile and Deploy Contract
 
-Click the *Build* button (hammer-shaped) on the toolbar to compile the contract. The compilation result will be saved in the `build/Coin.json` file. 
+Click the *Build* button (hammer-shaped) on the toolbar to compile the contract. The compilation result will be saved in the `build/Coin.json` file.
 
 <p align="center">
   <img src="./screenshots/button_build.png" width="200px">
@@ -266,12 +266,12 @@ Select the *Sent* method in the event query area and click Execute. Users can se
 
 Conflux Studio supports the [sponsorship function](https://developer.conflux-chain.org/docs/conflux-rust/internal_contract/internal_contract#sponsorship-for-usage-of-contracts) provided by the Conflux system contract.sponsorship function
 
-Through the system contract, the sponsorship function can be set for other contracts by four methods:
+Through the system contract, the sponsorship function can be set for other contracts by some methods:
 
-- `add_privilege`: add addresses to the contract sponsor whitelist. When an address in the sponsor whitelist calls the method of this contract, the handling fee will not be paid by the calling address but by the sponsor account. Adding the special address `0x0000000000000000000000000000000000000000` means that the caller wants to pay for all addresses that call this contract.
-- `remove_privilege`: remove addresses from the contract sponsor whitelist.
-- `set_sponsor_for_collateral`: set the sponsor account and amount of the collateral for storage.
-- `set_sponsor_for_gas`: set the gas fee sponsor account, the amount and the upper limit of the amount for each transaction
+- `addPrivilege`: add addresses to the contract sponsor whitelist. When an address in the sponsor whitelist calls the method of this contract, the handling fee will not be paid by the calling address but by the sponsor account. Adding the special address `0x0000000000000000000000000000000000000000` means that the caller wants to pay for all addresses that call this contract.
+- `removePrivilege`: remove addresses from the contract sponsor whitelist.
+- `setSponsorForCollateral`: set the sponsor account and amount of the collateral for storage.
+- `setSponsorForGas`: set the gas fee sponsor account, the amount and the upper limit of the amount for each transaction
 
 Activating the sponsorship function of a contract requires to set up a sponsor account, amount, and a sponsor whitelist. In this tutorial, we will use Conflux Studio to set the sponsor account and amount through the system contract, and add addresses to the whitelist through the Coin contract. After settings, the `minter_key` account will not be deducted the handling fee when calling the methods of the Coin contract, and the fee will be paid by the `sponsor_key` account.
 
@@ -283,7 +283,7 @@ Visit the system contract address `0x0888000000000000000000000000000000000001` i
   <img src="./screenshots/sponsor_methods.png" width="800px">
 </p>
 
-Choose the `set_sponsor_for_collateral` method. It has three parameters:
+Choose the `setSponsorForCollateral` method. It has three parameters:
 
 - *contract_addr*: Set the contract address for sponsor. Enter `contract_addr`.
 - *Value*: set the sponsor amount. Enter the integer 40.
@@ -295,7 +295,7 @@ Choose the `set_sponsor_for_collateral` method. It has three parameters:
 
 Enter the above parameters and execute. The system contract will set up the sponsor of the collateral for storage of the Coin contract, and the `sponsor_key` account will be deducted 40 CFX.
 
-Choose the `set_sponsor_for_gas` method. It has four parameters:
+Choose the `setSponsorForGas` method. It has four parameters:
 
 - *contract_addr*: Set the contract address for sponsor. Enter `contract_addr`.
 - *upper_bound*: set the upper limit of the sponsorship for each transaction. Enter 1000000000000.
@@ -314,7 +314,7 @@ After the call of these two methods, the Coin contract sponsor account is set up
 
 The method of setting the sponsor whitelist is integrated in the Coin contract. By calling this method, users can add/delete addresses to/from the sponsor whitelist.
 
-Access the `contract_addr` contract in Conflux Studio and select the *add_privilege* method:
+Access the `contract_addr` contract in Conflux Studio and select the *addPrivilege* method:
 
 - *account*: add the address to the whitelist. Enter the `minter_key` address.
 - *Value*: leave it blank.
@@ -365,7 +365,7 @@ When the project starts, the interface will display four modules:
 - Conflux network information module in the upper left
 - Conflux Portal module in the upper right
 - Coin contract module in the lower left
-- SponsorWhitelistControl contract module in the lower right 
+- SponsorWhitelistControl contract module in the lower right
 
 <p align="center">
   <img src="./screenshots/frontend.png" width="800px">
@@ -393,7 +393,7 @@ Users can use the token issuance and token transfer functions with the Coin cont
 
 #### Check the Balance in the Coin Contract
 
-Select the *balanceOf* method and enter the query address in the *tokenOwner* box, and click the *Query Data* button to view the account balance. 
+Select the *balanceOf* method and enter the query address in the *tokenOwner* box, and click the *Query Data* button to view the account balance.
 
 <p align="center">
   <img src="./screenshots/frontend_balanceof.png" width="600px">
