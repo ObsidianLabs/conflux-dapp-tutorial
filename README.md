@@ -79,13 +79,13 @@ Conflux DApp 开发教程将使用 [Conflux Studio](https://github.com/ObsidianL
   <img src="./screenshots/faucet.png" width="800px">
 </p>
 
-使用上述方法在 Conflux Studio 中为 `minter_key` 和 `sponsor_key` 申请 CFX Token。完成申请后，这两个账户上的余额将会从 0 CFX 更新为 100 CFX。
+使用上述方法在 Conflux Studio 中为 `minter_key` 和 `sponsor_key` 申请 CFX Token。完成申请后，这两个账户上的余额将会从 0 CFX 更新为 1,000 CFX。
 
 目前余额信息为：
 
-- `minter_key` 余额 100 CFX
+- `minter_key` 余额 1,000 CFX
 - `receiver_key` 余额 0 CFX
-- `sponsor_key` 余额 100 CFX
+- `sponsor_key` 余额 1,000 CFX
 
 ## 智能合约
 
