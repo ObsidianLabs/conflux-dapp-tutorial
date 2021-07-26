@@ -14,7 +14,7 @@
 
 ## 简介
 
-Conflux DApp 开发教程将使用 [Conflux Studio](https://github.com/ObsidianLabs/ConfluxStudio) 在 Tethys 网络下开发一个简单的代币应用 Coin。
+Conflux DApp 开发教程将使用 [Conflux Studio](https://github.com/ObsidianLabs/ConfluxStudio) 在 Testnet 网络下开发一个简单的代币应用 Coin。
 
 通过这个开发教程，你将会学习到如何进行 Conflux 智能合约的编写、调用，配置智能合约的代付以及如何使用 Web 前端项目与智能合约进行交互，从而实现一个包含前端和智能合约的完整的 DApp。
 
@@ -52,12 +52,12 @@ Conflux DApp 开发教程将使用 [Conflux Studio](https://github.com/ObsidianL
 
 ### 连接 Conflux 网络
 
-教程将在 Tethys 网络进行合约的部署以及合约的调用。点击顶部 *Network* 标签的倒三角打开下拉菜单，点击选择 *Tethys* 网络进行切换。
+教程将在 Testnet 网络进行合约的部署以及合约的调用。点击顶部 *Network* 标签的倒三角打开下拉菜单，点击选择 *Testnet* 网络进行切换。
 
-切换完成后，可以在主页面中看到当前网络为 *Tethys*。页面左边包括了当前网络的节点 *URL*，*Chain ID*，*TPS* 信息，页面右边包含了当前网络区块的信息。
+切换完成后，可以在主页面中看到当前网络为 *Testnet*。页面左边包括了当前网络的节点 *URL*，*Chain ID*，*TPS* 信息，页面右边包含了当前网络区块的信息。
 
 <p align="center">
-  <img src="./screenshots/tethys.png" width="800px">
+  <img src="./screenshots/Testnet.png" width="800px">
 </p>
 
 
@@ -69,10 +69,10 @@ Conflux DApp 开发教程将使用 [Conflux Studio](https://github.com/ObsidianL
   <img src="./screenshots/balance0.png" width="800px">
 </p>
 
-在区块链的世界中，大家通常将申请测试 Token 的方式称为 faucet，目前在 Tethys 网络下每次 faucet 申请到的 Token 为 100 CFX。
+在区块链的世界中，大家通常将申请测试 Token 的方式称为 faucet，目前在 Testnet 网络下每次 faucet 申请到的 Token 为 1,000 CFX。
 
 获取 CFX 的方式有两种方式：
-- 输入地址后点击地址栏右边的水龙头按钮，Conflux Studio 将为地址自动申请 CFX
+- 输入地址后点击地址栏右边的水龙头按钮，Conflux Studio 将为地址自动申请 CFX 和 cUSDT 两种测试代币。
 - 你也可以直接在浏览器中输入 `https://wallet.confluxscan.io/faucet/dev/ask?address={address}` 来申请 CFX
 
 <p align="center">
@@ -414,7 +414,7 @@ Conflux Portal 是由 Conflux 提供的浏览器插件，目前提供了 Chrome 
 项目使用 [React](https://reactjs.org) 进行开发。主要由三大部分组成：视图组件、js-conflux-sdk 以及 Conflux Portal。
 
 项目根目录下的 `.env` 环境变量，在这里定义了两个环境变量，分别为
-- `REACT_APP_CONFLUX_NODE_RPC`：Conflux 的网络节点地址，目前默认为 Tethys 网络的地址
+- `REACT_APP_CONFLUX_NODE_RPC`：Conflux 的网络节点地址，目前默认为 Testnet 网络的地址
 - `REACT_APP_CONFLUX_COIN_ADDRESS`：已部署的 Coin 智能合约地址
 
 #### 视图组件
@@ -427,7 +427,7 @@ Conflux Portal 是由 Conflux 提供的浏览器插件，目前提供了 Chrome 
 
 ##### ConfluxNetwork.js
 
-负责渲染 Conflux 网络信息，`Node URL` 的值为 `.env` 环境变量文件下的 `REACT_APP_CONFLUX_NODE_RPC` 设置的值（默认为 Tethys 网络）。
+负责渲染 Conflux 网络信息，`Node URL` 的值为 `.env` 环境变量文件下的 `REACT_APP_CONFLUX_NODE_RPC` 设置的值（默认为 Testnet 网络）。
 
 ##### ConfluxPortal.js
 
@@ -472,7 +472,7 @@ lib 在项目的 `src/lib` 中，这里的文件主要是为视图提供包括�
 在本开发教程中，我们学习了如何使用 Conflux Studio 来完成一个完整的 Coin DApp 开发，其中包括了：
 
 - 使用钥匙对管理器创建账户及导出账户私钥
-- 切换 Tethys 网络，查看网络信息
+- 切换 Testnet 网络，查看网络信息
 - 账户申请 CFX Token
 - 创建、编译并部署项目
 - 解析 Coin 合约代码，学习如何编写合约的读写方法及事件
